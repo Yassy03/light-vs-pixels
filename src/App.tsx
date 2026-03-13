@@ -253,6 +253,31 @@ const App: React.FC = () => {
     }
   }, []);
 
+
+  // 4. Keyboard Listener for Physical Button (Spacebar)
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check if Spacebar was pressed
+      if (event.code === 'Space' || event.key === ' ') {
+        event.preventDefault(); // Stops the page from scrolling down
+
+        // Prevent spam-clicking: Only capture if ready and not already analyzing
+        if (isCameraReady && !isAnalyzing) {
+          console.log("Physical button pressed! Triggering capture...");
+          captureSubject();
+        } else {
+          console.log("Button pressed, but system is not ready or is currently processing.");
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isCameraReady, isAnalyzing, captureSubject]); // Keep listener updated with current state
+
   return (
     <div className="min-h-screen bg-[#060606] text-[#eeeeee] font-mono flex flex-col items-center justify-center p-8 selection:bg-white selection:text-black">
       
